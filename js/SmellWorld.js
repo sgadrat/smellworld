@@ -31,8 +31,8 @@ var SmellWorld = {
 		},
 	},
 	gameState: {
-		mousePosition: {x: 1, y: 1},
-		cheesePosition: {x: 6, y: 6},
+		mousePosition: {x: 1 * tileSize, y: 1 * tileSize},
+		cheesePosition: {x: 6 * tileSize, y: 6 * tileSize},
 
 		// Maze reporesentation
 		//  maze[y][x] contains the tile at (x, y) position
@@ -114,18 +114,20 @@ var SmellWorld = {
 				SmellWorld.pixi.sprites.tiles[y][x].y = SmellWorld.coordTileToPixel(y) - SmellWorld.viewPortPosition().y;
 			}
 		}
-		SmellWorld.pixi.sprites.cheese.x = SmellWorld.coordTileToPixel(SmellWorld.gameState.cheesePosition.x) - SmellWorld.viewPortPosition().x;
-		SmellWorld.pixi.sprites.cheese.y = SmellWorld.coordTileToPixel(SmellWorld.gameState.cheesePosition.y) - SmellWorld.viewPortPosition().y;
+		SmellWorld.pixi.sprites.cheese.x = SmellWorld.gameState.cheesePosition.x - SmellWorld.viewPortPosition().x;
+		SmellWorld.pixi.sprites.cheese.y = SmellWorld.gameState.cheesePosition.y - SmellWorld.viewPortPosition().y;
 	},
 
 	setup: function() {
 		SmellWorld.pixi.sprites.mouse = new PIXI.Sprite(PIXI.loader.resources["imgs/mouse.png"].texture);
 		SmellWorld.generateMazeSprite();
+		SmellWorld.pixi.sprites.cheese = new PIXI.Sprite(PIXI.loader.resources["imgs/cheese.png"].texture);
+		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.cheese);
 		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.mouse);
 		SmellWorld.pixi.sprites.mouse.x = viewPortWidth / 2 - tileSize / 2;
 		SmellWorld.pixi.sprites.mouse.y = viewPortHeight / 2 - tileSize / 2;
-		SmellWorld.pixi.sprites.cheese = new PIXI.Sprite(PIXI.loader.resources["imgs/cheese.png"].texture);
-		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.cheese);
+
+
 		Input.init({
 			move: SmellWorld.commandMove,
 		});
@@ -149,10 +151,10 @@ var SmellWorld = {
 
 	commandMove: function(direction) {
 		var new_position = {
-			x: SmellWorld.gameState.mousePosition.x + direction.x,
-			y: SmellWorld.gameState.mousePosition.y + direction.y,
+			x: SmellWorld.gameState.mousePosition.x + (direction.x * tileSize),
+			y: SmellWorld.gameState.mousePosition.y + (direction.y * tileSize),
 		};
-		if (SmellWorld.gameState.maze[new_position.y][new_position.x] != MAZE_WALL) {
+		if (SmellWorld.gameState.maze[new_position.y / tileSize][new_position.x / tileSize] != MAZE_WALL) {
 			SmellWorld.gameState.mousePosition = new_position;
 		}
 	},
@@ -163,8 +165,21 @@ var SmellWorld = {
 
 	viewPortPosition: function() {
 		return {
-			x: SmellWorld.coordTileToPixel(SmellWorld.gameState.mousePosition.x) - viewPortWidth / 2 + tileSize / 2,
-			y: SmellWorld.coordTileToPixel(SmellWorld.gameState.mousePosition.y) - viewPortHeight / 2 + tileSize / 2,
+			x: SmellWorld.gameState.mousePosition.x - viewPortWidth / 2 + tileSize / 2,
+			y: SmellWorld.gameState.mousePosition.y - viewPortHeight / 2 + tileSize / 2,
 		};
 	},
 };
+
+var Utils = {
+	coordTileToPixel: function(component) {
+		return component * tileSize;
+	},
+
+	viewPortPosition: function() {
+		return {
+			x: SmellWorld.gameState.mousePosition.x - viewPortWidth / 2 + tileSize / 2,
+			y: SmellWorld.gameState.mousePosition.y - viewPortHeight / 2 + tileSize / 2,
+		};
+	}
+}
