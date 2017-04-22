@@ -1,5 +1,11 @@
 var SmellWorld = {
-	renderer: null,
+	pixi: {
+		renderer: null,
+		stage: null,
+		sprites: {
+			mouse: null,
+		},
+	},
 	gameState: {
 		mousePosition: {x: 0, y: 0},
 		cheesePosition: {x: 0, y: 0},
@@ -21,12 +27,24 @@ var SmellWorld = {
 	},
 
 	init: function() {
-		var type = "WebGL";
-		if(!PIXI.utils.isWebGLSupported()){
-			type = "canvas";
-		}
+		SmellWorld.pixi.stage = new PIXI.Container(),
+		SmellWorld.pixi.renderer = PIXI. autoDetectRenderer(900, 900);
+		document.body.appendChild(SmellWorld.pixi.renderer.view);
+		PIXI.loader.add([
+			'imgs/cheese.png',
+			'imgs/floor.png',
+			'imgs/mouse.png',
+			'imgs/wall.png',
+		])
+		.load(SmellWorld.setup);
+	},
 
-		PIXI.utils.sayHello(type);
+	setup: function() {
+		SmellWorld.pixi.sprites.mouse = new PIXI.Sprite(PIXI.loader.resources["imgs/mouse.png"].texture);
+		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.mouse);
+		SmellWorld.pixi.sprites.mouse.x = 900 / 2 - 300 / 2;
+		SmellWorld.pixi.sprites.mouse.y = 900 / 2 - 300 / 2;
+		SmellWorld.run();
 	},
 
 	run: function() {
@@ -34,7 +52,7 @@ var SmellWorld = {
 
 		SmellWorld.updateGame();
 		SmellWorld.updateStage();
-		SmellWorld.renderer.render();
+		SmellWorld.pixi.renderer.render(SmellWorld.pixi.stage);
 	},
 
 	updateGame: function() {
