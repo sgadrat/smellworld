@@ -6,7 +6,8 @@ var MazeGenerator = {
 		var max_w = 20; // Maximum maze width
 		var max_h = 20; // Maximum maze height
 		var maxTunnelsLength = 3; // Number of tiles the digger may dig before updating direction
-		var numDummyTunnels = 3; // Number of tunnels not going to the cheese
+		var numDummyTunnels = 2; // Number of tunnels not going to the cheese
+		var numWaypoints = 2; // Number of intermediary goals for the tunnel between mouse and cheese
 
 		// Generate a maze full of walls
 		var width = MazeGenerator.rand(min_w, max_w);
@@ -17,14 +18,22 @@ var MazeGenerator = {
 		});
 
 		// Choose cheese and mouse starting position
-		var mousePos = { x: MazeGenerator.rand(1, width-2), y: MazeGenerator.rand(1, height-2) };
-		var cheesePos = { x: MazeGenerator.rand(1, width-2), y: MazeGenerator.rand(1, height-2) };
+		var mousePos = { x: MazeGenerator.rand(0, 1) == 0 ? 1 : width - 2, y: MazeGenerator.rand(0, 1) == 0 ? 1 : height - 2 };
+		var cheesePos = { x: MazeGenerator.rand(0, 1) == 0 ? 1 : width - 2, y: MazeGenerator.rand(0, 1) == 0 ? 1 : height - 2 };
 		while (cheesePos.x == mousePos.x && cheesePos.y == mousePos.y) {
-			cheesePos = { x: MazeGenerator.rand(1, width-2), y: MazeGenerator.rand(1, height-2) };
+			cheesePos = { x: MazeGenerator.rand(0, 1) == 0 ? 1 : width - 2, y: MazeGenerator.rand(0, 1) == 0 ? 1 : height - 2 };
 		}
 
 		// Dig a tunnel from mouse to cheese
-		MazeGenerator.dig(mousePos, cheesePos, maze, maxTunnelsLength);
+		var waypoints = [mousePos];
+		for (var waypointNum = 0; waypointNum < numWaypoints; ++waypointNum) {
+			var newWp = { x: MazeGenerator.rand(1, width-2), y: MazeGenerator.rand(1, height-2) };
+			waypoints.push(newWp);
+		}
+		waypoints.push(cheesePos);
+		for (waypointNum = 0; waypointNum < waypoints.length-1; ++waypointNum) {
+			MazeGenerator.dig(waypoints[waypointNum], waypoints[waypointNum+1], maze, maxTunnelsLength);
+		}
 
 		// Dig dummy tunnels
 		for (var tunnelNum = 0; tunnelNum < numDummyTunnels; ++tunnelNum) {
@@ -94,7 +103,13 @@ var MazeGenerator = {
 				newPosition.y >= 1 && newPosition.y <= maze.length - 2
 			)
 			{
-				current = newPosition;
+				if (
+					Math.abs(goal.x - newPosition.x) < Math.abs(goal.x - current.x) ||
+					Math.abs(goal.y - newPosition.y) < Math.abs(goal.y - current.y)
+				)
+				{
+					current = newPosition;
+				}
 			}
 
 			maze[current.y][current.x] = MAZE_FLOOR;
