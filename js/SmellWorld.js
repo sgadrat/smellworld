@@ -114,7 +114,7 @@ var SmellWorld = {
 			x: SmellWorld.gameState.mousePosition.x + direction.x,
 			y: SmellWorld.gameState.mousePosition.y + direction.y,
 		};
-		if (SmellWorld.gameState.maze[new_position.y][new_position.x] != 2) {
+		if (SmellWorld.gameState.maze[new_position.y][new_position.x] != 1) {
 			SmellWorld.gameState.mousePosition = new_position;
 		}
 	},
