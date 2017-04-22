@@ -11,6 +11,7 @@ var MAZE_MOUSE = 2;
 var MAZE_CHEESE = 3;
 
 var SmellWorld = {
+	lastTime: null,
 	pixi: {
 		renderer: null,
 		stage: null,
@@ -123,21 +124,26 @@ var SmellWorld = {
 		Input.init({
 			move: SmellWorld.commandMove,
 		});
-
+		SmellWorld.lastTime = Date.now();
 		SmellWorld.run();
 	},
 
 	run: function() {
 		window.requestAnimationFrame(SmellWorld.run);
-		SmellWorld.updateGame();
-		SmellWorld.updateStage();
+		var currentTime = Date.now();
+		if(SmellWorld.lastTime == null){
+			SmellWorld.lastTime = currentTime - 16;
+		}
+		SmellWorld.updateGame(currentTime);
+		SmellWorld.updateStage(currentTime);
 		SmellWorld.pixi.renderer.render(SmellWorld.pixi.stage);
+		SmellWorld.lastTime = currentTime;
 	},
 
-	updateGame: function() {
+	updateGame: function(currentTime) {
 	},
 
-	updateStage: function() {
+	updateStage: function(currenTime) {
 		SmellWorld.repositionMaze();
 	},
 
