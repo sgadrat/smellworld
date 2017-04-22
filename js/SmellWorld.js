@@ -80,8 +80,8 @@ var SmellWorld = {
 		},
 	},
 	gameState: {
-		mousePosition: {x: 1 * tileSize, y: 1 * tileSize},
-		cheesePosition: {x: 6 * tileSize, y: 6 * tileSize},
+		mousePosition: null,
+		cheesePosition: null,
 		mouseState: { name: 'iddle', data: null, orientation: 'up' },
 		mouseOrientation: 'up',
 		// Maze reporesentation
@@ -157,6 +157,12 @@ var SmellWorld = {
 			SmellWorld.pixi.sprites.tiles.push([]);
 			for (var x = 0; x < SmellWorld.gameState.maze[y].length; ++x) {
 				SmellWorld.pixi.sprites.tiles[y].push(null);
+				if (SmellWorld.gameState.maze[y][x] == MAZE_MOUSE) {
+					SmellWorld.gameState.mousePosition = {x: SmellWorld.coordTileToPixel(x), y: SmellWorld.coordTileToPixel(y)};
+				}
+				if (SmellWorld.gameState.maze[y][x] == MAZE_CHEESE) {
+					SmellWorld.gameState.cheesePosition = {x: SmellWorld.coordTileToPixel(x), y: SmellWorld.coordTileToPixel(y)};
+				}
 			}
 		}
 
