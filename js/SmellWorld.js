@@ -15,8 +15,8 @@ var SmellWorld = {
 		},
 	},
 	gameState: {
-		mousePosition: {x: 0, y: 0},
-		cheesePosition: {x: 0, y: 0},
+		mousePosition: {x: 1, y: 4},
+		cheesePosition: {x: 1, y: 1},
 
 		// Maze reporesentation
 		//  maze[y][x] contains the tile at (x, y) position
@@ -89,6 +89,11 @@ var SmellWorld = {
 		SmellWorld.pixi.sprites.mouse.x = 900 / 2 - 300 / 2;
 		SmellWorld.pixi.sprites.mouse.y = 900 / 2 - 300 / 2;
 		SmellWorld.generateMazeSprite();
+		
+		Input.init({
+			move: SmellWorld.commandMove,
+		});
+
 		SmellWorld.run();
 	},
 
@@ -103,5 +108,15 @@ var SmellWorld = {
 	},
 
 	updateStage: function() {
+	},
+
+	commandMove: function(direction) {
+		var new_position = {
+			x: SmellWorld.gameState.mousePosition.x + direction.x,
+			y: SmellWorld.gameState.mousePosition.y + direction.y,
+		};
+		if (SmellWorld.gameState.maze[new_position.y][new_position.x] != 2) {
+			SmellWorld.gameState.mousePosition = new_position;
+		}
 	},
 };
