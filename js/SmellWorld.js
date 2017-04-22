@@ -1,3 +1,8 @@
+var MAZE_FLOOR = 0;
+var MAZE_WALL = 1;
+var MAZE_MOUSE = 2;
+var MAZE_CHEESE = 3;
+
 var SmellWorld = {
 	pixi: {
 		renderer: null,
@@ -25,12 +30,12 @@ var SmellWorld = {
 		//  2: mouse start position
 		//  3: cheese position
 		maze: [
-			[1, 1, 1, 1, 1, 1],
-			[1, 3, 0, 0, 0, 1],
-			[1, 1, 1, 1, 0, 1],
-			[1, 1, 1, 1, 0, 1],
-			[1, 2, 0, 0, 0, 1],
-			[1, 1, 1, 1, 1, 1],
+			[MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_WALL  ],
+			[MAZE_WALL  , MAZE_CHEESE, MAZE_FLOOR , MAZE_FLOOR , MAZE_FLOOR , MAZE_WALL  ],
+			[MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_FLOOR , MAZE_WALL  ],
+			[MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_FLOOR , MAZE_WALL  ],
+			[MAZE_WALL  , MAZE_MOUSE , MAZE_FLOOR , MAZE_FLOOR , MAZE_FLOOR , MAZE_WALL  ],
+			[MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_WALL  , MAZE_WALL  ],
 		]
 	},
 
@@ -50,23 +55,23 @@ var SmellWorld = {
 		for(y = 0; y < SmellWorld.gameState.maze.length; y ++){
 			for(x = 0; x < SmellWorld.gameState.maze[y].length; x++){
 				switch (SmellWorld.gameState.maze[y][x]) {
-					case 0:
+					case MAZE_FLOOR:
 
 						SmellWorld.pixi.sprites.tiles[y][x] = new PIXI.Sprite(
 							PIXI.loader.resources['imgs/floor.png'].texture
 						);
 						break;
-					case 1:
+					case MAZE_WALL:
 						SmellWorld.pixi.sprites.tiles[y][x] = new PIXI.Sprite(
 							PIXI.loader.resources['imgs/wall.png'].texture
 						);
 						break;
-					case 2:
+					case MAZE_MOUSE:
 						SmellWorld.pixi.sprites.tiles[y][x] = new PIXI.Sprite(
 							PIXI.loader.resources['imgs/mouse.png'].texture
 						);
 						break;
-					case 3:
+					case MAZE_CHEESE:
 						SmellWorld.pixi.sprites.tiles[y][x] = new PIXI.Sprite(
 							PIXI.loader.resources['imgs/cheese.png'].texture
 						);
@@ -115,7 +120,7 @@ var SmellWorld = {
 			x: SmellWorld.gameState.mousePosition.x + direction.x,
 			y: SmellWorld.gameState.mousePosition.y + direction.y,
 		};
-		if (SmellWorld.gameState.maze[new_position.y][new_position.x] != 1) {
+		if (SmellWorld.gameState.maze[new_position.y][new_position.x] != MAZE_WALL) {
 			SmellWorld.gameState.mousePosition = new_position;
 		}
 	},
