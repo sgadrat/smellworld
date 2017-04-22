@@ -1,9 +1,14 @@
 var MazeGenerator = {
 	generateMaze: function() {
-		var max_w = 10;
-		var max_h = 10;
-		var min_w = 5;
-		var min_h = 5;
+		// Tweakable parameters
+		var min_w = 10; // Minimum maze width
+		var min_h = 10; // Minimum maze height
+		var max_w = 20; // Maximum maze width
+		var max_h = 20; // Maximum maze height
+		var maxTunnelsLength = 3; // Number of tiles the digger may dig before updating direction
+		var numDummyTunnels = 3; // Number of tunnels not going to the cheese
+
+		// Generate a maze full of walls
 		var width = MazeGenerator.rand(min_w, max_w);
 		var height = MazeGenerator.rand(min_h, max_h);
 		var maze = MazeGenerator.generateWallMaze({
@@ -11,12 +16,41 @@ var MazeGenerator = {
 			height: height,
 		});
 
+		// Choose cheese and mouse starting position
 		var mousePos = { x: MazeGenerator.rand(1, width-2), y: MazeGenerator.rand(1, height-2) };
 		var cheesePos = { x: MazeGenerator.rand(1, width-2), y: MazeGenerator.rand(1, height-2) };
 		while (cheesePos.x == mousePos.x && cheesePos.y == mousePos.y) {
 			cheesePos = { x: MazeGenerator.rand(1, width-2), y: MazeGenerator.rand(1, height-2) };
 		}
-		MazeGenerator.dig(mousePos, cheesePos, maze);
+
+		// Dig a tunnel from mouse to cheese
+		MazeGenerator.dig(mousePos, cheesePos, maze, maxTunnelsLength);
+
+		// Dig dummy tunnels
+		for (var tunnelNum = 0; tunnelNum < numDummyTunnels; ++tunnelNum) {
+			var walls = [];
+			var floors = [];
+			for (var y = 1; y < height-1; ++y) {
+				for (var x = 1; x < width-1; ++x) {
+					if (maze[y][x] == MAZE_WALL) {
+						walls.push({x: x, y: y});
+					}
+					if (maze[y][x] == MAZE_FLOOR) {
+						floors.push({x: x, y: y});
+					}
+				}
+			}
+
+			if (floors.length > 1 && walls.length > 1) {
+				MazeGenerator.dig(
+					floors[MazeGenerator.rand(0, floors.length-1)],
+					walls[MazeGenerator.rand(0, walls.length-1)],
+					maze, maxTunnelsLength
+				);
+			}
+		}
+
+		// Place cheese and mouse
 		maze[mousePos.y][mousePos.x] = MAZE_MOUSE;
 		maze[cheesePos.y][cheesePos.x] = MAZE_CHEESE;
 
@@ -34,24 +68,36 @@ var MazeGenerator = {
 		return maze;
 	},
 
-	dig: function(start, goal, maze) {
+	dig: function(start, goal, maze, choiceFrequency) {
 		var current = {x: start.x, y:start.y};
-		while (current.x != goal.x) {
-			maze[current.y][current.x] = MAZE_FLOOR;
-			if (current.x < goal.x) {
-				++current.x;
-			}else {
-				--current.x;
+		var direction = null;
+		var changeDirection = 0;
+		while (current.x != goal.x || current.y != goal.y) {
+			if (changeDirection == 0) {
+				changeDirection = MazeGenerator.rand(1, choiceFrequency);
+				var newDirection;
+				if (current.y == goal.y || (current.x != goal.x) && Math.random() < 0.5) {
+					newDirection = {y: 0, x: (current.x < goal.x) ? 1 : -1};
+				}else {
+					newDirection = {y: (current.y < goal.y) ? 1 : -1, x:0};
+				}
+				direction = newDirection;
 			}
-		}
-		maze[current.y][current.x] = MAZE_FLOOR;
-		while (current.y != goal.y) {
-			maze[current.y][current.x] = MAZE_FLOOR;
-			if (current.y < goal.y) {
-				++current.y;
-			}else {
-				--current.y;
+			--changeDirection;
+
+			var newPosition = {
+				x: current.x + direction.x,
+				y: current.y + direction.y,
+			};
+			if (
+				newPosition.x >= 1 && newPosition.x <= maze[0].length - 2 &&
+				newPosition.y >= 1 && newPosition.y <= maze.length - 2
+			)
+			{
+				current = newPosition;
 			}
+
+			maze[current.y][current.x] = MAZE_FLOOR;
 		}
 	},
 
