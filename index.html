@@ -5,14 +5,7 @@
   <title>Hello World</title>
 </head>
   <script src="js/pixi.min.js"></script>
-<body>
-  <script type="text/javascript">
-    var type = "WebGL"
-    if(!PIXI.utils.isWebGLSupported()){
-      type = "canvas"
-    }
-
-    PIXI.utils.sayHello(type)
-  </script>
+  <script src="js/SmellWorld.js"></script>
+<body onload="SmellWorld.init();">
 </body>
 </html>
