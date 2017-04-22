@@ -63,7 +63,6 @@ var MouseBehaviour = {
 		SmellWorld.gameState.mousePosition = newPosition;
 		var atanY = SmellWorld.gameState.cheesePosition.y - SmellWorld.gameState.mousePosition.y;
 		var atanX = SmellWorld.gameState.cheesePosition.x - SmellWorld.gameState.mousePosition.x;
-		console.log(Math.atan2(atanY, atanX));
 		SmellWorld.pixi.sprites.arrow.rotation = (Math.PI/2) + Math.atan2(atanY, atanX);
 	},
 };
@@ -187,6 +186,9 @@ var SmellWorld = {
 		SmellWorld.pixi.sprites.arrow.x = viewPortWidth / 2 ;
 		SmellWorld.pixi.sprites.arrow.y = viewPortHeight / 2 ;
 		SmellWorld.pixi.sprites.arrow.anchor.set(0.5, 1.5);
+		var atanY = SmellWorld.gameState.cheesePosition.y - SmellWorld.gameState.mousePosition.y;
+		var atanX = SmellWorld.gameState.cheesePosition.x - SmellWorld.gameState.mousePosition.x;
+		SmellWorld.pixi.sprites.arrow.rotation = (Math.PI/2) + Math.atan2(atanY, atanX);
 		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.arrow);
 
 
