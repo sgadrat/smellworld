@@ -4,6 +4,14 @@ var SmellWorld = {
 		stage: null,
 		sprites: {
 			mouse: null,
+			tiles: [
+				[null, null, null, null, null, null],
+				[null, null, null, null, null, null],
+				[null, null, null, null, null, null],
+				[null, null, null, null, null, null],
+				[null, null, null, null, null, null],
+				[null, null, null, null, null, null],
+			]
 		},
 	},
 	gameState: {
@@ -38,18 +46,54 @@ var SmellWorld = {
 		])
 		.load(SmellWorld.setup);
 	},
+	generateMazeSprite: function(){
+		for(y = 0; y < SmellWorld.gameState.maze.length; y ++){
+			for(x = 0; x < SmellWorld.gameState.maze[y].length; x++){
+				switch (SmellWorld.gameState.maze[y][x]) {
+					case 0:
+
+						SmellWorld.pixi.sprites.tiles[y][x] = new PIXI.Sprite(
+							PIXI.loader.resources['imgs/floor.png'].texture
+						);
+						break;
+					case 1:
+						SmellWorld.pixi.sprites.tiles[y][x] = new PIXI.Sprite(
+							PIXI.loader.resources['imgs/wall.png'].texture
+						);
+						break;
+					case 2:
+						SmellWorld.pixi.sprites.tiles[y][x] = new PIXI.Sprite(
+							PIXI.loader.resources['imgs/mouse.png'].texture
+						);
+						break;
+					case 3:
+						SmellWorld.pixi.sprites.tiles[y][x] = new PIXI.Sprite(
+							PIXI.loader.resources['imgs/cheese.png'].texture
+						);
+						break;
+					default:
+
+				}
+				console.log(SmellWorld.pixi.sprites.tiles[y][x]);
+				SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.tiles[y][x]);
+				SmellWorld.pixi.sprites.tiles[y][x].y = y * 300;
+				SmellWorld.pixi.sprites.tiles[y][x].x = x * 300;
+			}
+		}
+
+	},
 
 	setup: function() {
 		SmellWorld.pixi.sprites.mouse = new PIXI.Sprite(PIXI.loader.resources["imgs/mouse.png"].texture);
 		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.mouse);
 		SmellWorld.pixi.sprites.mouse.x = 900 / 2 - 300 / 2;
 		SmellWorld.pixi.sprites.mouse.y = 900 / 2 - 300 / 2;
+		SmellWorld.generateMazeSprite();
 		SmellWorld.run();
 	},
 
 	run: function() {
 		window.requestAnimationFrame(SmellWorld.run);
-
 		SmellWorld.updateGame();
 		SmellWorld.updateStage();
 		SmellWorld.pixi.renderer.render(SmellWorld.pixi.stage);
