@@ -10,8 +10,25 @@ var MAZE_WALL = 1;
 var MAZE_MOUSE = 2;
 var MAZE_CHEESE = 3;
 
+var MouseBehaviour = {
+	iddle: function(currentTime){
+
+	},
+	mooving: function(currentTime){
+		var new_position =  SmellWorld.gameState.mouseState.data.endPosition;
+		if (SmellWorld.gameState.maze[new_position.y / tileSize][new_position.x / tileSize] != MAZE_WALL) {
+			SmellWorld.gameState.mousePosition = new_position;
+		}
+		SmellWorld.gameState.mouseState.name = 'iddle';
+	},
+};
+
 var SmellWorld = {
 	lastTime: null,
+	mouseBehaviours: {
+		'iddle': MouseBehaviour.iddle,
+		'mooving': MouseBehaviour.mooving,
+	},
 	pixi: {
 		renderer: null,
 		stage: null,
@@ -34,7 +51,7 @@ var SmellWorld = {
 	gameState: {
 		mousePosition: {x: 1 * tileSize, y: 1 * tileSize},
 		cheesePosition: {x: 6 * tileSize, y: 6 * tileSize},
-
+		mouseState: { name: 'iddle', data: null },
 		// Maze reporesentation
 		//  maze[y][x] contains the tile at (x, y) position
 		//  0: passable
@@ -141,6 +158,7 @@ var SmellWorld = {
 	},
 
 	updateGame: function(currentTime) {
+		SmellWorld.mouseBehaviours[SmellWorld.gameState.mouseState.name]();
 	},
 
 	updateStage: function(currenTime) {
@@ -152,10 +170,13 @@ var SmellWorld = {
 			x: SmellWorld.gameState.mousePosition.x + (direction.x * tileSize),
 			y: SmellWorld.gameState.mousePosition.y + (direction.y * tileSize),
 		};
-		if (SmellWorld.gameState.maze[new_position.y / tileSize][new_position.x / tileSize] != MAZE_WALL) {
-			SmellWorld.gameState.mousePosition = new_position;
-		}
+		SmellWorld.gameState.mouseState = {name: 'mooving', data: { startPosition: SmellWorld.gameState.mousePosition, endPosition: new_position}}
+		// if (SmellWorld.gameState.maze[new_position.y / tileSize][new_position.x / tileSize] != MAZE_WALL) {
+		// 	SmellWorld.gameState.mousePosition = new_position;
+		// }
 	},
+
+
 
 	coordTileToPixel: function(component) {
 		return component * tileSize;
@@ -168,16 +189,3 @@ var SmellWorld = {
 		};
 	},
 };
-
-var Utils = {
-	coordTileToPixel: function(component) {
-		return component * tileSize;
-	},
-
-	viewPortPosition: function() {
-		return {
-			x: SmellWorld.gameState.mousePosition.x - viewPortWidth / 2 + tileSize / 2,
-			y: SmellWorld.gameState.mousePosition.y - viewPortHeight / 2 + tileSize / 2,
-		};
-	}
-}
