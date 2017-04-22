@@ -19,12 +19,32 @@ var MouseBehaviour = {
 		var endPos =  SmellWorld.gameState.mouseState.data.endPosition;
 		var totalDuration = 500.;
 
+
+
 		if (SmellWorld.gameState.maze[endPos.y / tileSize][endPos.x / tileSize] == MAZE_WALL) {
 			SmellWorld.gameState.mouseState = {name: 'iddle', data:null};
 			return;
 		}
 		if (!SmellWorld.gameState.mouseState.data.startTime) {
-			SmellWorld.gameState.mouseState.data.startTime = currentTime
+			SmellWorld.gameState.mouseState.data.startTime = currentTime;
+			// Mouse orientation
+			if(endPos.x > startPos.x ){
+				//mouse is going down
+				SmellWorld.pixi.sprites.mouse.rotation = Math.PI / 2;
+				SmellWorld.gameState.mouseOrientation = 'right';
+			}else if (endPos.y > startPos.y){
+				//mouse is going down
+				SmellWorld.pixi.sprites.mouse.rotation = Math.PI;
+				SmellWorld.gameState.mouseOrientation = 'down';
+			}else if (endPos.y < startPos.y){
+				//mouse is going up
+				SmellWorld.pixi.sprites.mouse.rotation = 0;
+				SmellWorld.gameState.mouseOrientation = 'up';
+			}else if (endPos.x < startPos.x){
+				//mouse is going left
+				SmellWorld.pixi.sprites.mouse.rotation = (3 * Math.PI) / 2;
+				SmellWorld.gameState.mouseOrientation = 'left';
+			}
 		}
 
 		var currentDuration = currentTime - SmellWorld.gameState.mouseState.data.startTime;
@@ -72,7 +92,8 @@ var SmellWorld = {
 	gameState: {
 		mousePosition: {x: 1 * tileSize, y: 1 * tileSize},
 		cheesePosition: {x: 6 * tileSize, y: 6 * tileSize},
-		mouseState: { name: 'iddle', data: null },
+		mouseState: { name: 'iddle', data: null, orientation: 'up' },
+		mouseOrientation: 'up',
 		// Maze reporesentation
 		//  maze[y][x] contains the tile at (x, y) position
 		//  0: passable
@@ -151,12 +172,14 @@ var SmellWorld = {
 
 	setup: function() {
 		SmellWorld.pixi.sprites.mouse = new PIXI.Sprite(PIXI.loader.resources["imgs/mouse.png"].texture);
+		SmellWorld.pixi.sprites.mouse.anchor.set(0.5, 0.5);
+		SmellWorld.pixi.sprites.mouse.x = viewPortWidth / 2 ;
+		SmellWorld.pixi.sprites.mouse.y = viewPortHeight / 2 ;
 		SmellWorld.generateMazeSprite();
 		SmellWorld.pixi.sprites.cheese = new PIXI.Sprite(PIXI.loader.resources["imgs/cheese.png"].texture);
 		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.cheese);
 		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.mouse);
-		SmellWorld.pixi.sprites.mouse.x = viewPortWidth / 2 - tileSize / 2;
-		SmellWorld.pixi.sprites.mouse.y = viewPortHeight / 2 - tileSize / 2;
+
 
 
 		Input.init({
