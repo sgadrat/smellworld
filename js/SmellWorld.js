@@ -171,9 +171,6 @@ var SmellWorld = {
 			y: SmellWorld.gameState.mousePosition.y + (direction.y * tileSize),
 		};
 		SmellWorld.gameState.mouseState = {name: 'mooving', data: { startPosition: SmellWorld.gameState.mousePosition, endPosition: new_position}}
-		// if (SmellWorld.gameState.maze[new_position.y / tileSize][new_position.x / tileSize] != MAZE_WALL) {
-		// 	SmellWorld.gameState.mousePosition = new_position;
-		// }
 	},
 
 
