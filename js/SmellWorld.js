@@ -3,6 +3,8 @@ var viewPortWidth = 900 ;
 var viewPortHeight = 900 ;
 var tileSize = 300;
 
+var tileSize = 300; ///< Size of a tile in pixels
+
 var MAZE_FLOOR = 0;
 var MAZE_WALL = 1;
 var MAZE_MOUSE = 2;
@@ -108,12 +110,12 @@ var SmellWorld = {
 	repositionMaze: function(){
 		for(var y = 0; y < SmellWorld.pixi.sprites.tiles.length; y++){
 			for(var x = 0; x < SmellWorld.pixi.sprites.tiles[y].length; x++){
-				SmellWorld.pixi.sprites.tiles[y][x].y = (y * tileSize) - ((SmellWorld.gameState.mousePosition.y * tileSize)) + tileSize;
-				SmellWorld.pixi.sprites.tiles[y][x].x = (x * tileSize) - ((SmellWorld.gameState.mousePosition.x * tileSize)) + tileSize;
+				SmellWorld.pixi.sprites.tiles[y][x].x = SmellWorld.coordTileToPixel(x) - SmellWorld.viewPortPosition().x;
+				SmellWorld.pixi.sprites.tiles[y][x].y = SmellWorld.coordTileToPixel(y) - SmellWorld.viewPortPosition().y;
 			}
 		}
-		SmellWorld.pixi.sprites.cheese.x = (SmellWorld.gameState.cheesePosition.x * tileSize) - ((SmellWorld.gameState.mousePosition.x * tileSize)) + tileSize;
-		SmellWorld.pixi.sprites.cheese.y = (SmellWorld.gameState.cheesePosition.y * tileSize) - ((SmellWorld.gameState.mousePosition.y * tileSize)) + tileSize;
+		SmellWorld.pixi.sprites.cheese.x = SmellWorld.coordTileToPixel(SmellWorld.gameState.cheesePosition.x) - SmellWorld.viewPortPosition().x;
+		SmellWorld.pixi.sprites.cheese.y = SmellWorld.coordTileToPixel(SmellWorld.gameState.cheesePosition.y) - SmellWorld.viewPortPosition().y;
 	},
 
 	setup: function() {
@@ -153,5 +155,16 @@ var SmellWorld = {
 		if (SmellWorld.gameState.maze[new_position.y][new_position.x] != MAZE_WALL) {
 			SmellWorld.gameState.mousePosition = new_position;
 		}
+	},
+
+	coordTileToPixel: function(component) {
+		return component * tileSize;
+	},
+
+	viewPortPosition: function() {
+		return {
+			x: SmellWorld.coordTileToPixel(SmellWorld.gameState.mousePosition.x) - viewPortWidth / 2 + tileSize / 2,
+			y: SmellWorld.coordTileToPixel(SmellWorld.gameState.mousePosition.y) - viewPortHeight / 2 + tileSize / 2,
+		};
 	},
 };
