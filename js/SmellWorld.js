@@ -14,12 +14,33 @@ var MouseBehaviour = {
 	iddle: function(currentTime){
 
 	},
-	mooving: function(currentTime){
-		var new_position =  SmellWorld.gameState.mouseState.data.endPosition;
-		if (SmellWorld.gameState.maze[new_position.y / tileSize][new_position.x / tileSize] != MAZE_WALL) {
-			SmellWorld.gameState.mousePosition = new_position;
+	moving: function(currentTime){
+		var startPos = SmellWorld.gameState.mouseState.data.startPosition;
+		var endPos =  SmellWorld.gameState.mouseState.data.endPosition;
+		var totalDuration = 500.;
+
+		if (SmellWorld.gameState.maze[endPos.y / tileSize][endPos.x / tileSize] == MAZE_WALL) {
+			SmellWorld.gameState.mouseState = {name: 'iddle', data:null};
+			return;
 		}
-		SmellWorld.gameState.mouseState.name = 'iddle';
+		if (!SmellWorld.gameState.mouseState.data.startTime) {
+			SmellWorld.gameState.mouseState.data.startTime = currentTime
+		}
+
+		var currentDuration = currentTime - SmellWorld.gameState.mouseState.data.startTime;
+
+		if (currentDuration >= totalDuration) {
+			SmellWorld.gameState.mousePosition = endPos;
+			SmellWorld.gameState.mouseState = {name: 'iddle', data:null};
+			return;
+		}
+
+		var progress = currentDuration / totalDuration;
+		var newPosition = {
+			x: startPos.x + progress * (endPos.x - startPos.x),
+			y: startPos.y + progress * (endPos.y - startPos.y),
+		};
+		SmellWorld.gameState.mousePosition = newPosition;
 	},
 };
 
@@ -27,7 +48,7 @@ var SmellWorld = {
 	lastTime: null,
 	mouseBehaviours: {
 		'iddle': MouseBehaviour.iddle,
-		'mooving': MouseBehaviour.mooving,
+		'moving': MouseBehaviour.moving,
 	},
 	pixi: {
 		renderer: null,
@@ -158,7 +179,7 @@ var SmellWorld = {
 	},
 
 	updateGame: function(currentTime) {
-		SmellWorld.mouseBehaviours[SmellWorld.gameState.mouseState.name]();
+		SmellWorld.mouseBehaviours[SmellWorld.gameState.mouseState.name](currentTime);
 	},
 
 	updateStage: function(currenTime) {
@@ -166,11 +187,14 @@ var SmellWorld = {
 	},
 
 	commandMove: function(direction) {
+		if (SmellWorld.gameState.mouseState.name != 'iddle') {
+			return;
+		}
 		var new_position = {
 			x: SmellWorld.gameState.mousePosition.x + (direction.x * tileSize),
 			y: SmellWorld.gameState.mousePosition.y + (direction.y * tileSize),
 		};
-		SmellWorld.gameState.mouseState = {name: 'mooving', data: { startPosition: SmellWorld.gameState.mousePosition, endPosition: new_position}}
+		SmellWorld.gameState.mouseState = {name: 'moving', data: { startPosition: SmellWorld.gameState.mousePosition, endPosition: new_position}}
 	},
 
 
