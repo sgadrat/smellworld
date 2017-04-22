@@ -1,6 +1,6 @@
 
-var viewPortWidth = 900 * 6;
-var viewPortHeight = 900 * 6;
+var viewPortWidth = 900 ;
+var viewPortHeight = 900 ;
 
 var MAZE_FLOOR = 0;
 var MAZE_WALL = 1;
@@ -97,7 +97,7 @@ var SmellWorld = {
 				SmellWorld.pixi.sprites.tiles[y][x].x = (x * 300) - ((SmellWorld.gameState.mousePosition.x * 300)) + 300;
 			}
 		}
-		SmellWorld.pixi.sprites.cheese.x = (SmellWorld.gameState.cheesePosition.x * 300) - ((SmellWorld.gameState.mousePosition.y * 300)) + 300;
+		SmellWorld.pixi.sprites.cheese.x = (SmellWorld.gameState.cheesePosition.x * 300) - ((SmellWorld.gameState.mousePosition.x * 300)) + 300;
 		SmellWorld.pixi.sprites.cheese.y = (SmellWorld.gameState.cheesePosition.y * 300) - ((SmellWorld.gameState.mousePosition.y * 300)) + 300;
 	},
 
