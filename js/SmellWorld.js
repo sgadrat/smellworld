@@ -90,9 +90,11 @@ var SmellWorld = {
 		},
 	},
 	gameState: {
+		arrowPosition: {x :1 * tileSize, y :1 * tileSize},
+		arrowState: {data: {radiant: null}},
 		mousePosition: {x: 1 * tileSize, y: 1 * tileSize},
 		cheesePosition: {x: 6 * tileSize, y: 6 * tileSize},
-		mouseState: { name: 'iddle', data: null, orientation: 'up' },
+		mouseState: { name: 'iddle', data: null},
 		mouseOrientation: 'up',
 		// Maze reporesentation
 		//  maze[y][x] contains the tile at (x, y) position
