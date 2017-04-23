@@ -26,6 +26,7 @@ var MouseBehaviour = {
 			return;
 		}
 		if (!SmellWorld.gameState.mouseState.data.startTime) {
+			SmellWorld.pixi.sprites.mouse.play();
 			SmellWorld.gameState.mouseState.data.startTime = currentTime;
 			// Mouse orientation
 			if(endPos.x > startPos.x ){
@@ -61,9 +62,14 @@ var MouseBehaviour = {
 			y: startPos.y + progress * (endPos.y - startPos.y),
 		};
 		SmellWorld.gameState.mousePosition = newPosition;
-		var atanY = SmellWorld.gameState.cheesePosition.y - SmellWorld.gameState.mousePosition.y;
-		var atanX = SmellWorld.gameState.cheesePosition.x - SmellWorld.gameState.mousePosition.x;
-		SmellWorld.pixi.sprites.arrow.rotation = (Math.PI/2) + Math.atan2(atanY, atanX);
+		if (SmellWorld.gameState.maze[endPos.y / tileSize][endPos.x / tileSize] == MAZE_CHEESE) {
+			SmellWorld.pixi.stage.removeChild(SmellWorld.pixi.sprites.arrow);
+		} else {
+			var atanY = SmellWorld.gameState.cheesePosition.y - SmellWorld.gameState.mousePosition.y;
+			var atanX = SmellWorld.gameState.cheesePosition.x - SmellWorld.gameState.mousePosition.x;
+			SmellWorld.pixi.sprites.arrow.rotation = (Math.PI/2) + Math.atan2(atanY, atanX);
+		}
+
 	},
 };
 
@@ -177,7 +183,25 @@ var SmellWorld = {
 		SmellWorld.generateMazeSprite();
 		SmellWorld.pixi.sprites.cheese = new PIXI.Sprite(PIXI.loader.resources["imgs/cheese.png"].texture);
 		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.cheese);
-		SmellWorld.pixi.sprites.mouse = new PIXI.Sprite(PIXI.loader.resources["imgs/mouse.png"].texture);
+		var mouseImages = ['imgs/Animation/mouse_animated0000.png',
+											 'imgs/Animation/mouse_animated0001.png',
+										 	 'imgs/Animation/mouse_animated0002.png',
+									 	 	 'imgs/Animation/mouse_animated0003.png',
+								 		 	 'imgs/Animation/mouse_animated0004.png',
+							 			   'imgs/Animation/mouse_animated0005.png',
+										 	 'imgs/Animation/mouse_animated0006.png',
+									 	   'imgs/Animation/mouse_animated0007.png',
+								 		 	 'imgs/Animation/mouse_animated0008.png',
+							 			 	 'imgs/Animation/mouse_animated0009.png'
+										 ];
+		var mouseTexture = [];
+		for (var i=0; i < mouseImages.length; i++){
+		     var texture = PIXI.Texture.fromImage(mouseImages[i]);
+		     mouseTexture.push(texture);
+		};
+		SmellWorld.pixi.sprites.mouse = new PIXI.extras.AnimatedSprite(mouseTexture);
+		SmellWorld.pixi.sprites.mouse.loop = false;
+		SmellWorld.pixi.sprites.mouse.annimationSpeed = 1;
 		SmellWorld.pixi.sprites.mouse.anchor.set(0.5, 0.5);
 		SmellWorld.pixi.sprites.mouse.x = viewPortWidth / 2 ;
 		SmellWorld.pixi.sprites.mouse.y = viewPortHeight / 2 ;
