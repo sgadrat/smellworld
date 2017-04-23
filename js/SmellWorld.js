@@ -75,8 +75,6 @@ var MouseBehaviour = {
 	},
 };
 
-
-
 var SmellWorld = {
 	lastTime: null,
 	mouseBehaviours: {
@@ -93,20 +91,7 @@ var SmellWorld = {
 			tiles: null,
 		},
 	},
-	gameState: {
-		arrowState: {data: {radiant: null, distance: null}},
-		mouseState: { name: 'iddle', data: null},
-		mousePosition: null,
-		cheesePosition: null,
-		mouseOrientation: 'up',
-		// Maze reporesentation
-		//  maze[y][x] contains the tile at (x, y) position
-		//  0: passable
-		//  1: blocked
-		//  2: mouse start position
-		//  3: cheese position
-		maze: null,
-	},
+	gameState: null,
 
 	init: function() {
 		SmellWorld.pixi.stage = new PIXI.Container(),
@@ -155,18 +140,79 @@ var SmellWorld = {
 		}
 
 	},
-	repositionMaze: function(){
-		for(var y = 0; y < SmellWorld.pixi.sprites.tiles.length; y++){
-			for(var x = 0; x < SmellWorld.pixi.sprites.tiles[y].length; x++){
-				SmellWorld.pixi.sprites.tiles[y][x].x = SmellWorld.coordTileToPixel(x) - SmellWorld.viewPortPosition().x;
-				SmellWorld.pixi.sprites.tiles[y][x].y = SmellWorld.coordTileToPixel(y) - SmellWorld.viewPortPosition().y;
-			}
-		}
-		SmellWorld.pixi.sprites.cheese.x = SmellWorld.gameState.cheesePosition.x - SmellWorld.viewPortPosition().x;
-		SmellWorld.pixi.sprites.cheese.y = SmellWorld.gameState.cheesePosition.y - SmellWorld.viewPortPosition().y;
-	},
 
 	setup: function() {
+		GameStateIngame.setup();
+
+		Input.init({
+			move: SmellWorld.commandMove,
+		});
+		SmellWorld.lastTime = Date.now();
+		SmellWorld.run();
+	},
+
+	run: function() {
+		window.requestAnimationFrame(SmellWorld.run);
+		var currentTime = Date.now();
+		if(SmellWorld.lastTime == null){
+			SmellWorld.lastTime = currentTime - 16;
+		}
+		SmellWorld.updateGame(currentTime);
+		SmellWorld.updateStage(currentTime);
+		SmellWorld.pixi.renderer.render(SmellWorld.pixi.stage);
+		SmellWorld.lastTime = currentTime;
+	},
+
+	updateGame: function(currentTime) {
+		GameStateIngame.updateGame(currentTime);
+	},
+
+	updateStage: function(currentTime) {
+		GameStateIngame.updateStage(currentTime);
+	},
+
+	commandMove: function(direction) {
+		if (SmellWorld.gameState.mouseState.name != 'iddle') {
+			return;
+		}
+		var new_position = {
+			x: SmellWorld.gameState.mousePosition.x + (direction.x * tileSize),
+			y: SmellWorld.gameState.mousePosition.y + (direction.y * tileSize),
+		};
+		SmellWorld.gameState.mouseState = {name: 'moving', data: { startPosition: SmellWorld.gameState.mousePosition, endPosition: new_position}}
+	},
+
+
+
+	coordTileToPixel: function(component) {
+		return component * tileSize;
+	},
+
+	viewPortPosition: function() {
+		return {
+			x: SmellWorld.gameState.mousePosition.x - viewPortWidth / 2 + tileSize / 2,
+			y: SmellWorld.gameState.mousePosition.y - viewPortHeight / 2 + tileSize / 2,
+		};
+	},
+};
+
+var GameStateIngame = {
+	setup: function() {
+		SmellWorld.gameState = {
+			arrowState: {data: {radiant: null, distance: null}},
+			mouseState: { name: 'iddle', data: null},
+			mousePosition: null,
+			cheesePosition: null,
+			mouseOrientation: 'up',
+			// Maze reporesentation
+			//  maze[y][x] contains the tile at (x, y) position
+			//  0: passable
+			//  1: blocked
+			//  2: mouse start position
+			//  3: cheese position
+			maze: null,
+		};
+
 		SmellWorld.gameState.maze = MazeGenerator.generateMaze();
 		SmellWorld.pixi.sprites.tiles = [];
 		for (var y = 0; y < SmellWorld.gameState.maze.length; ++y) {
@@ -216,56 +262,24 @@ var SmellWorld = {
 		var atanX = SmellWorld.gameState.cheesePosition.x - SmellWorld.gameState.mousePosition.x;
 		SmellWorld.pixi.sprites.arrow.rotation = (Math.PI/2) + Math.atan2(atanY, atanX);
 		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.arrow);
-
-
-		Input.init({
-			move: SmellWorld.commandMove,
-		});
-		SmellWorld.lastTime = Date.now();
-		SmellWorld.run();
-	},
-
-	run: function() {
-		window.requestAnimationFrame(SmellWorld.run);
-		var currentTime = Date.now();
-		if(SmellWorld.lastTime == null){
-			SmellWorld.lastTime = currentTime - 16;
-		}
-		SmellWorld.updateGame(currentTime);
-		SmellWorld.updateStage(currentTime);
-		SmellWorld.pixi.renderer.render(SmellWorld.pixi.stage);
-		SmellWorld.lastTime = currentTime;
 	},
 
 	updateGame: function(currentTime) {
 		SmellWorld.mouseBehaviours[SmellWorld.gameState.mouseState.name](currentTime);
 	},
 
-	updateStage: function(currenTime) {
-		SmellWorld.repositionMaze();
+	updateStage: function(currentTime) {
+		GameStateIngame.repositionMaze();
 	},
 
-	commandMove: function(direction) {
-		if (SmellWorld.gameState.mouseState.name != 'iddle') {
-			return;
+	repositionMaze: function(){
+		for(var y = 0; y < SmellWorld.pixi.sprites.tiles.length; y++){
+			for(var x = 0; x < SmellWorld.pixi.sprites.tiles[y].length; x++){
+				SmellWorld.pixi.sprites.tiles[y][x].x = SmellWorld.coordTileToPixel(x) - SmellWorld.viewPortPosition().x;
+				SmellWorld.pixi.sprites.tiles[y][x].y = SmellWorld.coordTileToPixel(y) - SmellWorld.viewPortPosition().y;
+			}
 		}
-		var new_position = {
-			x: SmellWorld.gameState.mousePosition.x + (direction.x * tileSize),
-			y: SmellWorld.gameState.mousePosition.y + (direction.y * tileSize),
-		};
-		SmellWorld.gameState.mouseState = {name: 'moving', data: { startPosition: SmellWorld.gameState.mousePosition, endPosition: new_position}}
-	},
-
-
-
-	coordTileToPixel: function(component) {
-		return component * tileSize;
-	},
-
-	viewPortPosition: function() {
-		return {
-			x: SmellWorld.gameState.mousePosition.x - viewPortWidth / 2 + tileSize / 2,
-			y: SmellWorld.gameState.mousePosition.y - viewPortHeight / 2 + tileSize / 2,
-		};
+		SmellWorld.pixi.sprites.cheese.x = SmellWorld.gameState.cheesePosition.x - SmellWorld.viewPortPosition().x;
+		SmellWorld.pixi.sprites.cheese.y = SmellWorld.gameState.cheesePosition.y - SmellWorld.viewPortPosition().y;
 	},
 };
