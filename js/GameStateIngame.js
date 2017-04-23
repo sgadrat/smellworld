@@ -159,11 +159,13 @@ var GameStateIngame = {
 	},
 
 	updateGame: function(currentTime) {
+		// Update mouse
 		GameStateIngame.mouseBehaviours[GameStateIngame.gameState.mouseState.name](currentTime);
+
+		// Arrow size
 		var maxY = GameStateIngame.gameState.maze.length * tileSize;
 		var maxX = GameStateIngame.gameState.maze[0].length * tileSize;
 		var maxDist = Math.sqrt(Math.pow(maxX, 2) + Math.pow(maxY, 2));
-		//Arrow size
 		if(GameStateIngame.gameState.cheesePosition.x > GameStateIngame.gameState.mousePosition.x ){
 			var xDistance = GameStateIngame.gameState.cheesePosition.x - GameStateIngame.gameState.mousePosition.x ;
 		}else{
@@ -177,9 +179,19 @@ var GameStateIngame = {
 		}
 		var currentDist = Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
 		var scale = ((currentDist * 100) / maxDist) / 100;
-		console.log(scale);
 		GameStateIngame.sprites.arrow.scale.x = 1 - scale;
 		GameStateIngame.sprites.arrow.scale.y = 1 - scale;
+
+		// End game condition
+		var mouse = GameStateIngame.gameState.mousePosition;
+		var cheese = GameStateIngame.gameState.cheesePosition;
+		if (
+			Math.abs(mouse.x - cheese.x) < 150 &&
+			Math.abs(mouse.y - cheese.y) < 150
+		)
+		{
+			GameStateGameover.setup();
+		}
 	},
 
 	updateStage: function(currentTime) {
