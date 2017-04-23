@@ -162,26 +162,6 @@ var GameStateIngame = {
 		// Update mouse
 		GameStateIngame.mouseBehaviours[GameStateIngame.gameState.mouseState.name](currentTime);
 
-		// Arrow size
-		var maxY = GameStateIngame.gameState.maze.length * tileSize;
-		var maxX = GameStateIngame.gameState.maze[0].length * tileSize;
-		var maxDist = Math.sqrt(Math.pow(maxX, 2) + Math.pow(maxY, 2));
-		if(GameStateIngame.gameState.cheesePosition.x > GameStateIngame.gameState.mousePosition.x ){
-			var xDistance = GameStateIngame.gameState.cheesePosition.x - GameStateIngame.gameState.mousePosition.x ;
-		}else{
-			var xDistance = GameStateIngame.gameState.mousePosition.x - GameStateIngame.gameState.cheesePosition.x ;
-		}
-
-		if(GameStateIngame.gameState.cheesePosition.y > GameStateIngame.gameState.mousePosition.y){
-			var yDistance = GameStateIngame.gameState.cheesePosition.y - GameStateIngame.gameState.mousePosition.y;
-		}else {
-			var yDistance = GameStateIngame.gameState.mousePosition.y - GameStateIngame.gameState.cheesePosition.y;
-		}
-		var currentDist = Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
-		var scale = ((currentDist * 100) / maxDist) / 100;
-		GameStateIngame.sprites.arrow.scale.x = 1 - scale;
-		GameStateIngame.sprites.arrow.scale.y = 1 - scale;
-
 		// End game condition
 		var mouse = GameStateIngame.gameState.mousePosition;
 		var cheese = GameStateIngame.gameState.cheesePosition;
@@ -196,6 +176,17 @@ var GameStateIngame = {
 
 	updateStage: function(currentTime) {
 		GameStateIngame.repositionMaze();
+
+		// Arrow size
+		var maxY = GameStateIngame.gameState.maze.length * tileSize;
+		var maxX = GameStateIngame.gameState.maze[0].length * tileSize;
+		var maxDist = Math.sqrt(Math.pow(maxX, 2) + Math.pow(maxY, 2));
+		var xDistance = Math.abs(GameStateIngame.gameState.cheesePosition.x - GameStateIngame.gameState.mousePosition.x);
+		var yDistance = Math.abs(GameStateIngame.gameState.cheesePosition.y - GameStateIngame.gameState.mousePosition.y)
+		var currentDist = Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+		var scale = ((currentDist * 100) / maxDist) / 100;
+		GameStateIngame.sprites.arrow.scale.x = 1 - scale;
+		GameStateIngame.sprites.arrow.scale.y = 1 - scale;
 	},
 
 	commandMove: function(direction) {
