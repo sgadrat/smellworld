@@ -28,14 +28,14 @@ var SmellWorld = {
 			'imgs/floor.png',
 			'imgs/mouse.png',
 			'imgs/wall.png',
-			'imgs/arrow.png'
+			'imgs/arrow.png',
+			'imgs/title.png',
 		])
 		.load(SmellWorld.setup);
 	},
 
 	setup: function() {
-
-		GameStateIngame.setup();
+		GameStateTitle.setup();
 
 		Input.init({
 			move: SmellWorld.commandMove,
@@ -57,14 +57,14 @@ var SmellWorld = {
 	},
 
 	updateGame: function(currentTime) {
-		GameStateIngame.updateGame(currentTime);
+		SmellWorld.gameState.updateGame(currentTime);
 	},
 
 	updateStage: function(currentTime) {
-		GameStateIngame.updateStage(currentTime);
+		SmellWorld.gameState.updateStage(currentTime);
 	},
 
 	commandMove: function(direction) {
-		GameStateIngame.commandMove(direction);
+		SmellWorld.gameState.commandMove(direction);
 	},
 };
