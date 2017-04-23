@@ -11,6 +11,8 @@ var GameStateTitle = {
 		GameStateTitle.sprites.title.x = 0;
 		GameStateTitle.sprites.title.y = 0;
 		SmellWorld.pixi.stage.addChild(GameStateTitle.sprites.title);
+
+		document.getElementById('music').play();
 	},
 
 	updateGame: function(currentTime) {
