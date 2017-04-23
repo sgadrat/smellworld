@@ -21,7 +21,11 @@ var SmellWorld = {
 
 	init: function() {
 		SmellWorld.pixi.stage = new PIXI.Container(),
-		SmellWorld.pixi.renderer = PIXI. autoDetectRenderer(viewPortWidth, viewPortHeight );
+		SmellWorld.pixi.renderer = PIXI.autoDetectRenderer({
+			width: viewPortWidth,
+			height: viewPortHeight,
+			view: document.getElementById('viewport')
+		});
 		document.body.appendChild(SmellWorld.pixi.renderer.view);
 		var images = [
 			'imgs/cheese.png',
