@@ -12,7 +12,7 @@ var MAZE_CHEESE = 3;
 
 var MouseBehaviour = {
 	iddle: function(currentTime){
-
+		SmellWorld.pixi.sprites.mouse.stop();
 	},
 	moving: function(currentTime){
 		var startPos = SmellWorld.gameState.mouseState.data.startPosition;
@@ -20,13 +20,13 @@ var MouseBehaviour = {
 		var totalDuration = 500.;
 
 
-
 		if (SmellWorld.gameState.maze[endPos.y / tileSize][endPos.x / tileSize] == MAZE_WALL) {
 			SmellWorld.gameState.mouseState = {name: 'iddle', data:null};
+
 			return;
 		}
 		if (!SmellWorld.gameState.mouseState.data.startTime) {
-			SmellWorld.pixi.sprites.mouse.play();
+
 			SmellWorld.gameState.mouseState.data.startTime = currentTime;
 			// Mouse orientation
 			if(endPos.x > startPos.x ){
@@ -46,6 +46,8 @@ var MouseBehaviour = {
 				SmellWorld.pixi.sprites.mouse.rotation = (3 * Math.PI) / 2;
 				SmellWorld.gameState.mouseOrientation = 'left';
 			}
+		} else {
+			SmellWorld.pixi.sprites.mouse.play();
 		}
 
 		var currentDuration = currentTime - SmellWorld.gameState.mouseState.data.startTime;
@@ -200,7 +202,7 @@ var SmellWorld = {
 		     mouseTexture.push(texture);
 		};
 		SmellWorld.pixi.sprites.mouse = new PIXI.extras.AnimatedSprite(mouseTexture);
-		SmellWorld.pixi.sprites.mouse.loop = false;
+		// SmellWorld.pixi.sprites.mouse.loop = false;
 		SmellWorld.pixi.sprites.mouse.annimationSpeed = 1;
 		SmellWorld.pixi.sprites.mouse.anchor.set(0.5, 0.5);
 		SmellWorld.pixi.sprites.mouse.x = viewPortWidth / 2 ;
