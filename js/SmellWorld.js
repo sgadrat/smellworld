@@ -23,7 +23,7 @@ var SmellWorld = {
 		SmellWorld.pixi.stage = new PIXI.Container(),
 		SmellWorld.pixi.renderer = PIXI. autoDetectRenderer(viewPortWidth, viewPortHeight );
 		document.body.appendChild(SmellWorld.pixi.renderer.view);
-		PIXI.loader.add([
+		var images = [
 			'imgs/cheese.png',
 			'imgs/floor.png',
 			'imgs/mouse.png',
@@ -31,7 +31,14 @@ var SmellWorld = {
 			'imgs/arrow.png',
 			'imgs/title.png',
 			'imgs/gameover.png',
-		])
+		];
+		for (var i = 0; i <= 9; ++i) {
+			images.push('imgs/Animation/Frames_mouse/mouse_animated000'+ i +'.png');
+		}
+		for (var i = 0; i <= 11; ++i) {
+			images.push('imgs/Animation/Frames_arrow/arrow_animated00'+ (i < 10 ? '0' : '') + i +'.png');
+		}
+		PIXI.loader.add(images)
 		.load(SmellWorld.setup);
 	},
 

@@ -96,12 +96,6 @@ var GameStateIngame = {
 			mousePosition: null,
 			cheesePosition: null,
 			mouseOrientation: 'up',
-			// Maze reporesentation
-			//  maze[y][x] contains the tile at (x, y) position
-			//  0: passable
-			//  1: blocked
-			//  2: mouse start position
-			//  3: cheese position
 			maze: null,
 		};
 		SmellWorld.gameState = GameStateIngame;
@@ -123,38 +117,36 @@ var GameStateIngame = {
 		}
 
 		GameStateIngame.generateMazeSprite();
+
 		GameStateIngame.sprites.cheese = new PIXI.Sprite(PIXI.loader.resources["imgs/cheese.png"].texture);
 		SmellWorld.pixi.stage.addChild(GameStateIngame.sprites.cheese);
-		var mouseImages = [
-			'imgs/Animation/Frames_mouse/mouse_animated0000.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0001.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0002.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0003.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0004.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0005.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0006.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0007.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0008.png',
-			'imgs/Animation/Frames_mouse/mouse_animated0009.png',
-		];
+
 		var mouseTexture = [];
-		for (var i=0; i < mouseImages.length; i++){
-		     var texture = PIXI.Texture.fromImage(mouseImages[i]);
+		for (var i=0; i <= 9; i++){
+		     var texture = PIXI.loader.resources['imgs/Animation/Frames_mouse/mouse_animated000'+ i +'.png'].texture;
 		     mouseTexture.push(texture);
 		};
 		GameStateIngame.sprites.mouse = new PIXI.extras.AnimatedSprite(mouseTexture);
-		GameStateIngame.sprites.mouse.annimationSpeed = 1;
+		GameStateIngame.sprites.mouse.animationSpeed = 1;
 		GameStateIngame.sprites.mouse.anchor.set(0.5, 0.5);
 		GameStateIngame.sprites.mouse.x = viewPortWidth / 2 ;
 		GameStateIngame.sprites.mouse.y = viewPortHeight / 2 ;
 		SmellWorld.pixi.stage.addChild(GameStateIngame.sprites.mouse);
-		GameStateIngame.sprites.arrow = new PIXI.Sprite(PIXI.loader.resources["imgs/arrow.png"].texture);
+
+		var arrowTextures = [];
+		for (var i=0; i <= 11; i++){
+		     var texture = PIXI.loader.resources['imgs/Animation/Frames_arrow/arrow_animated00'+ (i < 10 ? '0' : '') + i +'.png'].texture;
+		     arrowTextures.push(texture);
+		};
+		GameStateIngame.sprites.arrow = new PIXI.extras.AnimatedSprite(arrowTextures);
+		GameStateIngame.sprites.arrow.animationSpeed = 0.3;
+		GameStateIngame.sprites.arrow.anchor.set(0.5, 1.5);
 		GameStateIngame.sprites.arrow.x = viewPortWidth / 2 ;
 		GameStateIngame.sprites.arrow.y = viewPortHeight / 2 ;
-		GameStateIngame.sprites.arrow.anchor.set(0.5, 1.5);
 		var atanY = GameStateIngame.gameState.cheesePosition.y - GameStateIngame.gameState.mousePosition.y;
 		var atanX = GameStateIngame.gameState.cheesePosition.x - GameStateIngame.gameState.mousePosition.x;
 		GameStateIngame.sprites.arrow.rotation = (Math.PI/2) + Math.atan2(atanY, atanX);
+		GameStateIngame.sprites.arrow.play();
 		SmellWorld.pixi.stage.addChild(GameStateIngame.sprites.arrow);
 	},
 
