@@ -1,7 +1,6 @@
 
 var viewPortWidth = 900;
 var viewPortHeight = 900;
-var tileSize = 300;
 
 var tileSize = 300; ///< Size of a tile in pixels
 
@@ -49,9 +48,7 @@ var SmellWorld = {
 	setup: function() {
 		GameStateTitle.setup();
 
-		Input.init({
-			move: SmellWorld.commandMove,
-		});
+		Input.init();
 		SmellWorld.lastTime = Date.now();
 		SmellWorld.run();
 	},
@@ -74,9 +71,5 @@ var SmellWorld = {
 
 	updateStage: function(currentTime) {
 		SmellWorld.gameState.updateStage(currentTime);
-	},
-
-	commandMove: function(direction) {
-		SmellWorld.gameState.commandMove(direction);
 	},
 };

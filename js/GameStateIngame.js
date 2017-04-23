@@ -1,6 +1,25 @@
 var MouseBehaviour = {
 	iddle: function(currentTime){
 		GameStateIngame.sprites.mouse.stop();
+
+		var direction = null;
+		if (Input.state['ArrowUp']) {
+			direction = {x: 0, y: -1};
+		}else if (Input.state['ArrowRight']) {
+			direction = {x: 1, y: 0};
+		}else if (Input.state['ArrowDown']) {
+			direction = {x: 0, y: 1};
+		}else if (Input.state['ArrowLeft']) {
+			direction = {x: -1, y: 0};
+		}
+
+		if (direction !== null) {
+			var new_position = {
+				x: GameStateIngame.gameState.mousePosition.x + (direction.x * tileSize),
+				y: GameStateIngame.gameState.mousePosition.y + (direction.y * tileSize),
+			};
+			GameStateIngame.gameState.mouseState = {name: 'moving', data: { startPosition: GameStateIngame.gameState.mousePosition, endPosition: new_position}}
+		}
 	},
 
 	moving: function(currentTime){
@@ -180,17 +199,6 @@ var GameStateIngame = {
 		GameStateIngame.sprites.arrow.scale.x = 1 - scale;
 		GameStateIngame.sprites.arrow.scale.y = 1 - scale;
 	},
-
-	commandMove: function(direction) {
-		if (GameStateIngame.gameState.mouseState.name != 'iddle') {
-			return;
-		}
-		var new_position = {
-	x: GameStateIngame.gameState.mousePosition.x + (direction.x * tileSize),
-	y: GameStateIngame.gameState.mousePosition.y + (direction.y * tileSize),
-		};
-		GameStateIngame.gameState.mouseState = {name: 'moving', data: { startPosition: GameStateIngame.gameState.mousePosition, endPosition: new_position}}
-    },
 
 	repositionMaze: function(){
 		for(var y = 0; y < GameStateIngame.sprites.tiles.length; y++){
