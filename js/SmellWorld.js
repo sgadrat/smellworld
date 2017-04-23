@@ -19,7 +19,19 @@ var MouseBehaviour = {
 		var endPos =  SmellWorld.gameState.mouseState.data.endPosition;
 		var totalDuration = 500.;
 
+		//Arrow size
+		if(SmellWorld.gameState.cheesePosition.x > SmellWorld.gameState.mousePosition.x ){
+			var xDistance = SmellWorld.gameState.cheesePosition.x - SmellWorld.gameState.mousePosition.x ;
+		}else{
+			var xDistance = SmellWorld.gameState.mousePosition.x - SmellWorld.gameState.cheesePosition.x ;
+		}
 
+		if(SmellWorld.gameState.cheesePosition.y > SmellWorld.gameState.mousePosition.y){
+			var yDistance = SmellWorld.gameState.cheesePosition.y - SmellWorld.gameState.mousePosition.y;
+		}else {
+			var yDistance = SmellWorld.gameState.mousePosition.y - SmellWorld.gameState.cheesePosition.y;
+		}
+		console.log('x: ' + xDistance, 'y: ' + yDistance);
 		if (SmellWorld.gameState.maze[endPos.y / tileSize][endPos.x / tileSize] == MAZE_WALL) {
 			SmellWorld.gameState.mouseState = {name: 'iddle', data:null};
 
@@ -67,9 +79,11 @@ var MouseBehaviour = {
 		if (SmellWorld.gameState.maze[endPos.y / tileSize][endPos.x / tileSize] == MAZE_CHEESE) {
 			SmellWorld.pixi.stage.removeChild(SmellWorld.pixi.sprites.arrow);
 		} else {
+			// Arrow orientation
 			var atanY = SmellWorld.gameState.cheesePosition.y - SmellWorld.gameState.mousePosition.y;
 			var atanX = SmellWorld.gameState.cheesePosition.x - SmellWorld.gameState.mousePosition.x;
 			SmellWorld.pixi.sprites.arrow.rotation = (Math.PI/2) + Math.atan2(atanY, atanX);
+
 		}
 
 	},
@@ -185,16 +199,16 @@ var SmellWorld = {
 		SmellWorld.generateMazeSprite();
 		SmellWorld.pixi.sprites.cheese = new PIXI.Sprite(PIXI.loader.resources["imgs/cheese.png"].texture);
 		SmellWorld.pixi.stage.addChild(SmellWorld.pixi.sprites.cheese);
-		var mouseImages = ['imgs/Animation/mouse_animated0000.png',
-											 'imgs/Animation/mouse_animated0001.png',
-										 	 'imgs/Animation/mouse_animated0002.png',
-									 	 	 'imgs/Animation/mouse_animated0003.png',
-								 		 	 'imgs/Animation/mouse_animated0004.png',
-							 			   'imgs/Animation/mouse_animated0005.png',
-										 	 'imgs/Animation/mouse_animated0006.png',
-									 	   'imgs/Animation/mouse_animated0007.png',
-								 		 	 'imgs/Animation/mouse_animated0008.png',
-							 			 	 'imgs/Animation/mouse_animated0009.png'
+		var mouseImages = ['imgs/Animation/Frames_mouse/mouse_animated0000.png',
+											 'imgs/Animation/Frames_mouse/mouse_animated0001.png',
+										 	 'imgs/Animation/Frames_mouse/mouse_animated0002.png',
+									 	 	 'imgs/Animation/Frames_mouse/mouse_animated0003.png',
+								 		 	 'imgs/Animation/Frames_mouse/mouse_animated0004.png',
+							 			   'imgs/Animation/Frames_mouse/mouse_animated0005.png',
+										 	 'imgs/Animation/Frames_mouse/mouse_animated0006.png',
+									 	   'imgs/Animation/Frames_mouse/mouse_animated0007.png',
+								 		 	 'imgs/Animation/Frames_mouse/mouse_animated0008.png',
+							 			 	 'imgs/Animation/Frames_mouse/mouse_animated0009.png'
 										 ];
 		var mouseTexture = [];
 		for (var i=0; i < mouseImages.length; i++){
